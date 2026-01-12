@@ -26,7 +26,7 @@ jobs:
     
     - name: Install dependencies
       run: |
-        pip install pandas pyarrow gspread oauth2client duckdb
+        pip install pandas pyarrow gspread oauth2client duckdb dotenv
 
     - name: Create credentials file
       run: |
