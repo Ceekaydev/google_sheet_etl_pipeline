@@ -27,6 +27,12 @@ jobs:
     - name: Install dependencies
       run: |
         pip install pandas pyarrow gspread oauth2client duckdb
+
+    - name: Create credentials file
+      run: |
+       mkdir -p secret
+       echo '${{ secrets.GOOGLE_SHEETS_CREDS_FILE }}' > secret/sheets-pipeline-483414-4c2de1d1423c.json
+
     
     - name: Run data pipeline
       env:
