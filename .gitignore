@@ -1,0 +1,7 @@
+venv/
+secret/
+.env
+.env.*
+__pycache__/
+data/
+.DS_Store
