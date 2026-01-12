@@ -2,19 +2,14 @@ name: Monthly Data Pipeline
 
 on:
   schedule:
-    # Run daily at 2 AM UTC
     - cron: '0 2 * * *'
-  
-  # Allow manual trigger from GitHub UI
   workflow_dispatch:
-  
-  # Run when code is pushed (optional - can remove if you don't want this)
   push:
     branches:
       - main
     paths:
-      - 'scripts/**'  # Only trigger if files in scripts/ folder change
-      - '.github/workflows/**'  # Or if workflow itself changes
+      - 'scripts/**'
+      - '.github/workflows/**'
 
 jobs:
   process-data:
@@ -43,8 +38,9 @@ jobs:
         python main.py
     
     - name: Upload parquet artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: monthly-data
         path: data/*.parquet
         retention-days: 90
+        if-no-files-found: ignore
