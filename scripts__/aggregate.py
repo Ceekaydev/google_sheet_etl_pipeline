@@ -72,6 +72,7 @@ QUERIES = {
         WHERE h22025_maintenance_date IS NULL 
         AND State = 'Lagos'
             AND Current_Status = 'Active'
+            AND commissioning_date < '2025-08-01'
             AND (
                     (lo_status = 'OS' 
                     AND (maintenance_sub_expiration_duration IS NULL 
@@ -98,6 +99,7 @@ QUERIES = {
         WHERE h22025_maintenance_date IS NULL 
         AND State != 'Lagos'
             AND Current_Status = 'Active'
+            AND commissioning_date < '2025-08-01'
             AND (
                     (lo_status = 'OS' 
                     AND (maintenance_sub_expiration_duration IS NULL 
@@ -116,7 +118,7 @@ QUERIES = {
         SELECT 
             device_id, customer_name, customer_address, cluster, state, 
             lo_status, current_status, customer_profile, 
-            h22025_maintenance_date AS last_maintenance,
+            h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
             pipeline_version, source_file, batch_id
 
@@ -143,7 +145,7 @@ QUERIES = {
         SELECT 
             device_id, customer_name, customer_address, cluster, state, 
             lo_status, current_status, customer_profile, 
-            h22025_maintenance_date AS last_maintenance,
+            h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
             pipeline_version, source_file, batch_id
 
@@ -171,7 +173,7 @@ QUERIES = {
         SELECT 
             device_id, customer_name, customer_address, cluster, state, 
             lo_status, current_status, customer_profile, 
-            h22025_maintenance_date AS last_maintenance,
+            h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
             pipeline_version, source_file, batch_id
 
@@ -199,7 +201,7 @@ QUERIES = {
         SELECT 
             device_id, customer_name, customer_address, cluster, state, 
             lo_status, current_status, customer_profile, 
-            h22025_maintenance_date AS last_maintenance,
+            h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
             pipeline_version, source_file, batch_id
         FROM read_parquet({{parquet_files}})
@@ -221,12 +223,12 @@ QUERIES = {
         );
     """,
 
-    # Query 6: Customer for March PPM in Lagos
+    # Query 7: Customer for March PPM in Lagos
     "March_ppm_2026(lagos)": """
         SELECT 
             device_id, customer_name, customer_address, cluster, state, 
             lo_status, current_status, customer_profile, 
-            h22025_maintenance_date AS last_maintenance,
+            h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
             pipeline_version, source_file, batch_id
         FROM read_parquet({{parquet_files}})
@@ -247,12 +249,12 @@ QUERIES = {
 			            OR maintenance_sub_expiration_duration LIKE '%Remaining%'))
         );
     """,
-    # Query 7: Customer for March PPM outside Lagos
+    # Query 8: Customer for March PPM outside Lagos
     "March_ppm_2026(outside_lagos)": """
         SELECT 
             device_id, customer_name, customer_address, cluster, state, 
             lo_status, current_status, customer_profile, 
-            h22025_maintenance_date AS last_maintenance,
+            h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
             pipeline_version, source_file, batch_id
         FROM read_parquet({{parquet_files}})
@@ -274,12 +276,12 @@ QUERIES = {
         );
     """,
 
-    # Query 7: Customer for April PPM outside Lagos
+    # Query 9: Customer for April PPM outside Lagos
     "April_ppm_2026(lagos)": """
         SELECT 
             device_id, customer_name, customer_address, cluster, state, 
             lo_status, current_status, customer_profile, 
-            h22025_maintenance_date AS last_maintenance,
+            h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
             pipeline_version, source_file, batch_id
         FROM read_parquet({{parquet_files}})
@@ -301,12 +303,12 @@ QUERIES = {
         );
     """,
 
-    # Query 8: Customer for April PPM outside Lagos
+    # Query 10: Customer for April PPM outside Lagos
     "April_ppm_2026(outside_lagos)": """
         SELECT 
             device_id, customer_name, customer_address, cluster, state, 
             lo_status, current_status, customer_profile, 
-            h22025_maintenance_date AS last_maintenance,
+            h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
             pipeline_version, source_file, batch_id
         FROM read_parquet({{parquet_files}})
@@ -328,12 +330,12 @@ QUERIES = {
         );
     """,
 
-    # Query 9: Customer for May PPM outside Lagos
+    # Query 11: Customer for May PPM outside Lagos
     "May_ppm_2026(lagos)": """
         SELECT 
             device_id, customer_name, customer_address, cluster, state, 
             lo_status, current_status, customer_profile, 
-            h22025_maintenance_date AS last_maintenance,
+            h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
             pipeline_version, source_file, batch_id
         FROM read_parquet({{parquet_files}})
@@ -355,12 +357,12 @@ QUERIES = {
         );
     """,
 
-    # Query 10: Customer for May PPM outside Lagos
+    # Query 12: Customer for May PPM outside Lagos
     "May_ppm_2026(outside_lagos)": """
         SELECT 
             device_id, customer_name, customer_address, cluster, state, 
             lo_status, current_status, customer_profile, 
-            h22025_maintenance_date AS last_maintenance,
+            h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
             pipeline_version, source_file, batch_id
         FROM read_parquet({{parquet_files}})
@@ -382,12 +384,12 @@ QUERIES = {
         );
     """,
 
-    # Query 11: Customer for June PPM outside Lagos
+    # Query 13: Customer for June PPM outside Lagos
     "June_ppm_2026(lagos)": """
         SELECT 
             device_id, customer_name, customer_address, cluster, state, 
             lo_status, current_status, customer_profile, 
-            h22025_maintenance_date AS last_maintenance,
+            h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
             pipeline_version, source_file, batch_id
         FROM read_parquet({{parquet_files}})
@@ -409,12 +411,12 @@ QUERIES = {
         );
     """,
 
-    # Query 12: Customer for June PPM outside Lagos
+    # Query 14: Customer for June PPM outside Lagos
     "June_ppm_2026(outside_lagos)": """
         SELECT 
             device_id, customer_name, customer_address, cluster, state, 
             lo_status, current_status, customer_profile, 
-            h22025_maintenance_date AS last_maintenance,
+            h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
             pipeline_version, source_file, batch_id
         FROM read_parquet({{parquet_files}})
@@ -446,8 +448,8 @@ def run_all_queries():
     results = {}
     
     # Determine which files to query (current month by default)
-    current_month = datetime.now().strftime('%Y%m')
-    parquet_pattern = f'data/processed/processed_{current_month}*.parquet'
+    today_str = datetime.now().strftime('%Y%m%d')
+    parquet_pattern = f'data/processed/processed_{today_str}*.parquet'
     
     print("=" * 60)
     print(f"Running {len(QUERIES)} SQL queries on: {parquet_pattern}")

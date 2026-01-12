@@ -7,7 +7,10 @@ import os
 from datetime import datetime
 import time
 from dotenv import load_dotenv
+
+from aggregate import run_all_queries
 load_dotenv()
+import glob
 
 def get_pipeline_config():
     """
@@ -148,8 +151,23 @@ def run_pipeline():
         pipeline_stats.update(clean_stats)
         
         # Step 3: Run DuckDB aggregations
-        print("\n[3/4] Running SQL aggregations with DuckDB...")
-        aggregate_data()
+        # print("\n[3/4] Running SQL aggregations with DuckDB...")
+        # aggregate_data()
+        from aggregate import run_all_queries  # make sure to import the function
+        aggregated_results = run_all_queries()  # <-- capture the dictionary
+
+        # Keep only today's files
+        today_str = datetime.now().strftime('%Y%m%d')
+        today_files = [p for p in aggregated_results.values() if p and today_str in p]
+
+        if today_files:
+            pipeline_stats['output_file'] = today_files[0]  # pick main aggregation
+        else:
+            pipeline_stats['output_file'] = ''
+
+        for f in glob.glob('data/aggregated/*.parquet'):
+            if today_str not in f:
+                os.remove(f)
         
         # Step 4: Upload back to Google Sheets
         print("\n[4/4] Uploading results to Google Sheets...")
