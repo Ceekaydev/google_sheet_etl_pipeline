@@ -1,4 +1,4 @@
-name: Monthly Data Pipeline
+name: Daily Data Pipeline
 
 on:
   schedule:
@@ -30,13 +30,14 @@ jobs:
 
     - name: Create credentials file
       run: |
-       mkdir -p secret
-       echo '${{ secrets.GOOGLE_SHEETS_CREDS_FILE }}' > secret/sheets-pipeline-483414-4c2de1d1423c.json
+        mkdir -p secret
+        cat << 'EOF' > secret/sheets-pipeline-483414-4c2de1d1423c.json
+        ${{ secrets.GOOGLE_SHEETS_CREDS_FILE }}
+        EOF
 
-    
     - name: Run data pipeline
       env:
-        GOOGLE_SHEETS_CREDS_FILE: secret/sheets-pipeline-483414-4c2de1d1423c.json
+        GOOGLE_SHEETS_CREDS_FILE: ${{ github.workspace }}/secret/sheets-pipeline-483414-4c2de1d1423c.json
         SOURCE_SHEET_URL: ${{ secrets.SOURCE_SHEET_URL }}
         OUTPUT_SHEET_URL: ${{ secrets.OUTPUT_SHEET_URL }}
       run: |
