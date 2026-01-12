@@ -30,7 +30,7 @@ jobs:
     
     - name: Run data pipeline
       env:
-        GOOGLE_SHEETS_CREDS: ${{ secrets.GOOGLE_SHEETS_CREDS }}
+        GOOGLE_SHEETS_CREDS: ${{ secrets.GOOGLE_SHEETS_CREDS_FILE }}
         SOURCE_SHEET_URL: ${{ secrets.SOURCE_SHEET_URL }}
         OUTPUT_SHEET_URL: ${{ secrets.OUTPUT_SHEET_URL }}
       run: |
