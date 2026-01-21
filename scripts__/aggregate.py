@@ -62,7 +62,7 @@ QUERIES = {
     # Query 1: Customer without H2 PPM in Lagos
     "customers_without_h2_ppm_lagos": """
         SELECT 
-            device_id, customer_name, customer_address, cluster, state, 
+            device_id, customer_name, customer_address, customer_phone_number, commissioning_date, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -72,7 +72,6 @@ QUERIES = {
         WHERE h22025_maintenance_date IS NULL 
         AND State = 'Lagos'
             AND Current_Status = 'Active'
-            AND commissioning_date < '2025-08-01'
             AND (
                     (lo_status = 'OS' 
                     AND (maintenance_sub_expiration_duration IS NULL 
@@ -89,7 +88,7 @@ QUERIES = {
     # Query 2: Customer without H2 PPM outside Lagos
     "customers_without_h2_ppm_outside_lagos": """
         SELECT 
-            device_id, customer_name, customer_address, cluster, state, 
+            device_id, customer_name, customer_address, customer_phone_number, commissioning_date, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -99,7 +98,6 @@ QUERIES = {
         WHERE h22025_maintenance_date IS NULL 
         AND State != 'Lagos'
             AND Current_Status = 'Active'
-            AND commissioning_date < '2025-08-01'
             AND (
                     (lo_status = 'OS' 
                     AND (maintenance_sub_expiration_duration IS NULL 
@@ -116,7 +114,7 @@ QUERIES = {
     # Query 3: Customer for January PPM in Lagos
     "January_ppm_2026(lagos)": """
         SELECT 
-            device_id, customer_name, customer_address, cluster, state, 
+            device_id, customer_name, customer_address, customer_phone_number, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -143,7 +141,7 @@ QUERIES = {
     # Query 4: Customer for January PPM outside Lagos
     "January_ppm_2026(outside_lagos)": """
         SELECT 
-            device_id, customer_name, customer_address, cluster, state, 
+            device_id, customer_name, customer_address, customer_phone_number, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -171,7 +169,7 @@ QUERIES = {
     # Query 5: Customer for February PPM in Lagos
     "February_ppm_2026(lagos)": """
         SELECT 
-            device_id, customer_name, customer_address, cluster, state, 
+            device_id, customer_name, customer_address, customer_phone_number, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -199,7 +197,7 @@ QUERIES = {
     # Query 6: Customer for February PPM outside Lagos
     "February_ppm_2026(outside_lagos)": """
         SELECT 
-            device_id, customer_name, customer_address, cluster, state, 
+            device_id, customer_name, customer_address, customer_phone_number, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -226,7 +224,7 @@ QUERIES = {
     # Query 7: Customer for March PPM in Lagos
     "March_ppm_2026(lagos)": """
         SELECT 
-            device_id, customer_name, customer_address, cluster, state, 
+            device_id, customer_name, customer_address, customer_phone_number, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -252,7 +250,7 @@ QUERIES = {
     # Query 8: Customer for March PPM outside Lagos
     "March_ppm_2026(outside_lagos)": """
         SELECT 
-            device_id, customer_name, customer_address, cluster, state, 
+            device_id, customer_name, customer_address, customer_phone_number, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -279,7 +277,7 @@ QUERIES = {
     # Query 9: Customer for April PPM outside Lagos
     "April_ppm_2026(lagos)": """
         SELECT 
-            device_id, customer_name, customer_address, cluster, state, 
+            device_id, customer_name, customer_address, customer_phone_number, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -306,7 +304,7 @@ QUERIES = {
     # Query 10: Customer for April PPM outside Lagos
     "April_ppm_2026(outside_lagos)": """
         SELECT 
-            device_id, customer_name, customer_address, cluster, state, 
+            device_id, customer_name, customer_address, customer_phone_number, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -333,7 +331,7 @@ QUERIES = {
     # Query 11: Customer for May PPM outside Lagos
     "May_ppm_2026(lagos)": """
         SELECT 
-            device_id, customer_name, customer_address, cluster, state, 
+            device_id, customer_name, customer_address, customer_phone_number, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -360,7 +358,7 @@ QUERIES = {
     # Query 12: Customer for May PPM outside Lagos
     "May_ppm_2026(outside_lagos)": """
         SELECT 
-            device_id, customer_name, customer_address, cluster, state, 
+            device_id, customer_name, customer_address, customer_phone_number, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -387,7 +385,7 @@ QUERIES = {
     # Query 13: Customer for June PPM outside Lagos
     "June_ppm_2026(lagos)": """
         SELECT 
-            device_id, customer_name, customer_address, cluster, state, 
+            device_id, customer_name, customer_address, customer_phone_number, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -414,7 +412,7 @@ QUERIES = {
     # Query 14: Customer for June PPM outside Lagos
     "June_ppm_2026(outside_lagos)": """
         SELECT 
-            device_id, customer_name, customer_address, cluster, state, 
+            device_id, customer_name, customer_address, customer_phone_number, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
