@@ -72,6 +72,7 @@ def create_pipeline_report(pipeline_stats):
     report_data = {
         'timestamp': [ts],
         'status': [pipeline_stats.get('status', 'Success')],
+        'enrichment_status': [pipeline_stats.get('enrichment_status', 'N/A')],
         'total_rows_loaded': [pipeline_stats.get('rows_loaded', 0)],
         'total_rows_final': [pipeline_stats.get('rows_final', 0)],
         'rows_filtered': [pipeline_stats.get('rows_filtered', 0)],
@@ -89,7 +90,7 @@ def create_pipeline_report(pipeline_stats):
     
     return pd.DataFrame(report_data)
 
-def upload_pipeline_log(sheet_url, pipeline_stats, log_sheet_name='Pipeline_Logs'):
+def upload_pipeline_log(sheet_url, pipeline_stats, log_sheet_name='Pipeline_logs_1'):
     """
     Upload pipeline execution log to Google Sheets
     Appends to existing log sheet or creates new one

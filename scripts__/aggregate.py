@@ -8,23 +8,22 @@ import pandas as pd
 from datetime import datetime
 import os
 
-def run_query(query_name, sql_query, parquet_pattern='data/processed/processed_*.parquet'):
+def run_query(query_name, sql_query, parquet_pattern):
     """
-    Execute a SQL query and return results with metadata
-    
-    Args:
-        query_name: Name of the query (used for file naming)
-        sql_query: The SQL query to execute
-        parquet_pattern: Pattern to match parquet files
-    
-    Returns:
-        DataFrame with query results
+    Execute a SQL query.
+    parquet_pattern can be a glob path OR a specific file path.
     """
     con = duckdb.connect()
     
     try:
-        # Replace placeholder with actual file pattern
-        sql_query = sql_query.replace('{{parquet_files}}', f"'{parquet_pattern}'")
+        # Check if parquet_pattern is already wrapped in quotes, if not, wrap it
+        if not parquet_pattern.startswith("'"):
+            parquet_path_sql = f"'{parquet_pattern}'"
+        else:
+            parquet_path_sql = parquet_pattern
+
+        # Replace placeholder
+        sql_query = sql_query.replace('{{parquet_files}}', parquet_path_sql)
         
         print(f"\nRunning query: {query_name}")
         result = con.execute(sql_query).df()
@@ -62,7 +61,7 @@ QUERIES = {
     # Query 1: Customer without H2 PPM in Lagos
     "customers_without_h2_ppm_lagos": """
         SELECT 
-            device_id, customer_name, customer_address, customer_phone_number, commissioning_date, cluster, state, 
+            device_id, customer_name, customer_address, area_cluster, customer_phone_number, commissioning_date, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -114,7 +113,7 @@ QUERIES = {
     # Query 3: Customer for January PPM in Lagos
     "January_ppm_2026(lagos)": """
         SELECT 
-            device_id, customer_name, customer_address, customer_phone_number, cluster, state, 
+            device_id, customer_name, customer_address, area_cluster, customer_phone_number, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -169,7 +168,7 @@ QUERIES = {
     # Query 5: Customer for February PPM in Lagos
     "February_ppm_2026(lagos)": """
         SELECT 
-            device_id, customer_name, customer_address, customer_phone_number, cluster, state, 
+            device_id, customer_name, customer_address, area_cluster, customer_phone_number, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -224,7 +223,7 @@ QUERIES = {
     # Query 7: Customer for March PPM in Lagos
     "March_ppm_2026(lagos)": """
         SELECT 
-            device_id, customer_name, customer_address, customer_phone_number, cluster, state, 
+            device_id, customer_name, customer_address, area_cluster, customer_phone_number, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -277,7 +276,7 @@ QUERIES = {
     # Query 9: Customer for April PPM outside Lagos
     "April_ppm_2026(lagos)": """
         SELECT 
-            device_id, customer_name, customer_address, customer_phone_number, cluster, state, 
+            device_id, customer_name, customer_address, area_cluster, customer_phone_number, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -331,7 +330,7 @@ QUERIES = {
     # Query 11: Customer for May PPM outside Lagos
     "May_ppm_2026(lagos)": """
         SELECT 
-            device_id, customer_name, customer_address, customer_phone_number, cluster, state, 
+            device_id, customer_name, customer_address, area_cluster, customer_phone_number, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -385,7 +384,7 @@ QUERIES = {
     # Query 13: Customer for June PPM outside Lagos
     "June_ppm_2026(lagos)": """
         SELECT 
-            device_id, customer_name, customer_address, customer_phone_number, cluster, state, 
+            device_id, customer_name, customer_address, area_cluster, customer_phone_number, cluster, state, 
             lo_status, current_status, customer_profile, 
             h22025_maintenance_date AS last_maintenance, ingestion_timestamp,
             ingestion_date,
@@ -438,27 +437,50 @@ QUERIES = {
 
 }
 
-def run_all_queries():
+def run_all_queries(specific_input_path=None):
     """
-    Execute all queries and save each result separately
-    Returns a dictionary: {query_name: output_path}
+    Execute all queries.
+    Args:
+        specific_input_path: If provided, runs queries ONLY on this file.
+                             If None, defaults to pattern matching (risky).
     """
     results = {}
     
-    # Determine which files to query (current month by default)
-    today_str = datetime.now().strftime('%Y%m%d')
-    parquet_pattern = f'data/processed/processed_{today_str}*.parquet'
-    
-    print("=" * 60)
-    print(f"Running {len(QUERIES)} SQL queries on: {parquet_pattern}")
-    print("=" * 60)
+    # LOGIC CHANGE: Use the specific file passed from main.py if available
+    if specific_input_path:
+        # We wrap it in single quotes for SQL syntax
+        parquet_source = f"'{specific_input_path}'"
+        print("=" * 60)
+        print(f"Running {len(QUERIES)} SQL queries on SPECIFIC FILE: {specific_input_path}")
+        print("=" * 60)
+    else:
+        # Fallback (Old behavior) - RISKY as it might match multiple files
+        today_str = datetime.now().strftime('%Y%m%d')
+        # We use a glob pattern here
+        parquet_source = f"'data/processed/processed_{today_str}*.parquet'"
+        print("=" * 60)
+        print(f"Running {len(QUERIES)} SQL queries on PATTERN: {parquet_source}")
+        print("=" * 60)
     
     for query_name, sql_query in QUERIES.items():
-        # Run query
-        df = run_query(query_name, sql_query, parquet_pattern)
+        # Replace the placeholder in the SQL with the actual path/pattern
+        # We pass the formatted string directly now
+        
+        # Note: We need to modify run_query slightly to handle this, 
+        # or just do the replacement here before calling run_query.
+        # Let's adjust run_query call:
+        
+        # Create a temporary version of the query with the file path injected
+        final_sql = sql_query.replace('{{parquet_files}}', parquet_source)
+        
+        # We pass the final SQL directly to run_query, bypassing the internal replace logic
+        # You will need to update run_query signature slightly or just rely on the fact 
+        # that run_query does a replace on {{parquet_files}} which we handled.
+        
+        # ACTUALLY, simpler fix: Pass the raw pattern to run_query
+        df = run_query(query_name, sql_query, parquet_pattern=specific_input_path if specific_input_path else f'data/processed/processed_{today_str}*.parquet')
         
         if not df.empty:
-            # Save result
             output_path = save_query_result(df, query_name)
             results[query_name] = output_path
         else:

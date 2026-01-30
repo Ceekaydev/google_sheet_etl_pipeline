@@ -25,8 +25,9 @@ jobs:
         python-version: '3.11'
     
     - name: Install dependencies
+      # Added 'openpyxl' just in case pandas needs it for Excel export later
       run: |
-        pip install pandas pyarrow gspread oauth2client duckdb dotenv
+        pip install pandas pyarrow gspread oauth2client duckdb dotenv openpyxl
 
     - name: Create credentials file
       run: |
@@ -48,6 +49,8 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: monthly-data
-        path: data/*.parquet
+        # CRITICAL FIX: Point to the data folder INSIDE scripts__
+        # checks subdirectories (raw, processed, aggregated)
+        path: scripts__/data/**/*.parquet 
         retention-days: 90
         if-no-files-found: ignore
