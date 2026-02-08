@@ -2,6 +2,8 @@
 upload_to_sheets.py
 Uploads multiple aggregated results to separate Google Sheet tabs
 Each query gets its own worksheet
+
+FIX (2025-02-08): Removed dynamic monthly suffix - worksheets now have constant names
 """
 import pandas as pd
 import gspread
@@ -102,9 +104,16 @@ def upload_all_aggregations(sheet_url):
     """
     Find all aggregation files and upload each to separate worksheets
     
+    FIX (2025-02-08): Removed dynamic monthly suffix - keeps constant worksheet names
+    
     Naming convention:
-    - File: sales_by_region_20260105.parquet
-    - Sheet: sales_by_region_2026_01 (query name + monthly suffix)
+    - File: customers_without_h2_ppm_lagos_20260208.parquet (date in filename)
+    - Sheet: customers_without_h2_ppm_lagos (NO date suffix - CONSTANT)
+    
+    Benefits:
+    - Same 14 worksheets updated each run (no proliferation of tabs)
+    - Latest data always in the same place
+    - Cleaner, more maintainable spreadsheet
     """
     agg_files = glob.glob('data/aggregated/*_*.parquet')
     
@@ -120,19 +129,22 @@ def upload_all_aggregations(sheet_url):
     client = get_sheets_client()
     spreadsheet = client.open_by_url(sheet_url)
     
-    # Get current month for sheet naming
-    current_month = datetime.now().strftime('%Y_%m')
+    # FIX (2025-02-08): REMOVED this line that added dynamic month suffix
+    # OLD: current_month = datetime.now().strftime('%Y_%m')
+    # NEW: No month variable - use query name directly
     
     uploaded_count = 0
     
     for file_path in agg_files:
         # Extract query name from filename
-        # Example: data/aggregated/sales_by_region_20260105.parquet
+        # Example: data/aggregated/customers_without_h2_ppm_lagos_20260208.parquet
         filename = os.path.basename(file_path)
         query_name = '_'.join(filename.split('_')[:-1])  # Remove date suffix
         
-        # Create sheet name: query_name + monthly suffix
-        sheet_name = f"{query_name}_{current_month}"
+        # FIX (2025-02-08): Use query_name directly WITHOUT adding month suffix
+        # OLD: sheet_name = f"{query_name}_{current_month}"  # ❌ Creates new tabs monthly
+        # NEW: sheet_name = query_name                        # ✅ Constant worksheet names
+        sheet_name = query_name
         
         print(f"\n[{uploaded_count + 1}/{len(agg_files)}] {query_name}")
         
@@ -150,6 +162,7 @@ def upload_all_aggregations(sheet_url):
     
     print("\n" + "=" * 60)
     print(f"✓ Successfully uploaded {uploaded_count}/{len(agg_files)} worksheets")
+    print(f"✓ All worksheets use constant names (no date suffix)")
     print("=" * 60)
     
     return uploaded_count
@@ -158,6 +171,8 @@ def upload_single_query(sheet_url, query_name):
     """
     Upload a specific query result to Google Sheets
     Useful for testing individual queries
+    
+    FIX (2025-02-08): Also updated to use constant sheet names
     """
     # Find the latest file for this query
     pattern = f'data/aggregated/{query_name}_*.parquet'
@@ -173,8 +188,11 @@ def upload_single_query(sheet_url, query_name):
     client = get_sheets_client()
     spreadsheet = client.open_by_url(sheet_url)
     
-    current_month = datetime.now().strftime('%Y_%m')
-    sheet_name = f"{query_name}_{current_month}"
+    # FIX (2025-02-08): Use query_name directly without month suffix
+    # OLD: current_month = datetime.now().strftime('%Y_%m')
+    # OLD: sheet_name = f"{query_name}_{current_month}"
+    # NEW: sheet_name = query_name
+    sheet_name = query_name
     
     upload_dataframe_to_sheet(df, spreadsheet, sheet_name)
     print(f"Uploaded {query_name} to worksheet: {sheet_name}")
