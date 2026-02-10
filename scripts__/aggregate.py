@@ -69,7 +69,7 @@ QUERIES = {
 
         FROM read_parquet({{parquet_files}})
         WHERE h22025_maintenance_date IS NULL
-        AND h12026_maintenance_date IS NOT NULL 
+        AND h12026_maintenance_date IS NULL 
         AND State = 'Lagos'
             AND Current_Status = 'Active'
             AND (
@@ -96,7 +96,7 @@ QUERIES = {
 
         FROM read_parquet({{parquet_files}})
         WHERE h22025_maintenance_date IS NULL
-        AND h12026_maintenance_date IS NOT NULL
+        AND h12026_maintenance_date IS NULL
         AND State != 'Lagos'
             AND Current_Status = 'Active'
             AND (
