@@ -1,20 +1,44 @@
-from dotenv import load_dotenv
-import os
+# from dotenv import load_dotenv
+# import os
 
-load_dotenv()
+# load_dotenv()
 
-cred_json = os.getenv('GOOGLE_SHEETS_CRED')
-print(cred_json)
+# cred_json = os.getenv('GOOGLE_SHEETS_CRED')
+# print(cred_json)
+
+# import pandas as pd
+
+# # Load your Parquet file
+# df = pd.read_parquet("data/raw/raw_20260208.parquet")  # put your actual file path
+
+# # Preview the data
+# print(df.head())      # shows first 5 rows
+# print(df.info())      # shows columns, types, non-null counts
+# print(df.describe())  # summary stats for numeric columns
+
 
 import pandas as pd
 
-# Load your Parquet file
-df = pd.read_parquet("data/raw/raw_20260208.parquet")  # put your actual file path
+# Load RAW data (before cleaning)
+raw_df = pd.read_parquet('data/raw/raw_20260208.parquet')
+print(f'Total raw rows: {len(raw_df)}')
 
-# Preview the data
-print(df.head())      # shows first 5 rows
-print(df.info())      # shows columns, types, non-null counts
-print(df.describe())  # summary stats for numeric columns
+# Find duplicate device_ids
+duplicates = raw_df[raw_df.duplicated(subset=['device_id'], keep=False)]
+duplicate_ids = duplicates['device_id'].unique()
+
+print(f'\n=== Found {len(duplicate_ids)} device IDs with duplicates ===\n')
+
+# Show details for each duplicate ID
+for device_id in duplicate_ids[:10]:  # Show first 10
+    print(f'\n--- Device ID: {device_id} ---')
+    rows = raw_df[raw_df['device_id'] == device_id]
+    print(f'Number of duplicate rows: {len(rows)}')
+    
+    # Show key fields to compare
+    print(rows[['device_id', 'customer_name', 'commissioning_date', 
+                'h22025_maintenance_date', 'current_status', 'state']].to_string())
+    print()
 
 
 # import gspread

@@ -68,7 +68,8 @@ QUERIES = {
             pipeline_version, source_file, batch_id
 
         FROM read_parquet({{parquet_files}})
-        WHERE h22025_maintenance_date IS NULL 
+        WHERE h22025_maintenance_date IS NULL
+        AND h12026_maintenance_date IS NOT NULL 
         AND State = 'Lagos'
             AND Current_Status = 'Active'
             AND (
@@ -94,7 +95,8 @@ QUERIES = {
             pipeline_version, source_file, batch_id
 
         FROM read_parquet({{parquet_files}})
-        WHERE h22025_maintenance_date IS NULL 
+        WHERE h22025_maintenance_date IS NULL
+        AND h12026_maintenance_date IS NOT NULL
         AND State != 'Lagos'
             AND Current_Status = 'Active'
             AND (
